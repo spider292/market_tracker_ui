@@ -1,39 +1,34 @@
-// src/components/DataTable.js
 import React from "react";
-import "../DataTable.css";
+import "./DataTable.css";
 
 function DataTable({ data }) {
+  const copy = (val) => navigator.clipboard.writeText(val);
+
+  const open = data.filter(d => d.open !== undefined).map(d => d.open);
+  const high = data.filter(d => d.high !== undefined).map(d => d.high);
+  const low = data.filter(d => d.low !== undefined).map(d => d.low);
+  const close = data.filter(d => d.close !== undefined).map(d => d.close);
+  const maxLen = Math.max(open.length, high.length, low.length, close.length);
+
   return (
-    <div className="table-section">
+    <div className="table-wrapper">
       <table>
         <thead>
-          <tr>
-            <th>Open</th>
-            <th>High</th>
-            <th>Low</th>
-            <th>Close</th>
-            <th>Copy</th>
-          </tr>
+          <tr><th>Open</th><th>High</th><th>Low</th><th>Close</th></tr>
         </thead>
         <tbody>
-          {data.map((row, index) => (
-            <tr key={index}>
-              <td>{row.open}</td>
-              <td>{row.high}</td>
-              <td>{row.low}</td>
-              <td>{row.close}</td>
-              <td>
-                <button
-                  className="copy-btn"
-                  onClick={() => {
-                    navigator.clipboard.writeText(
-                      `Open: ${row.open}, High: ${row.high}, Low: ${row.low}, Close: ${row.close}`
-                    );
-                  }}
-                >
-                  Copy
-                </button>
-              </td>
+          {Array.from({ length: maxLen }).map((_, i) => (
+            <tr key={i}>
+              {[open[i], high[i], low[i], close[i]].map((val, j) => (
+                <td key={j}>
+                  {val !== undefined && (
+                    <>
+                      {val}{" "}
+                      <span onClick={() => copy(val)} className="copy-icon">📋</span>
+                    </>
+                  )}
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>
